@@ -28,36 +28,50 @@ Architecture DATA of INSF_8BITS is
     signal Q : STD_LOGIC_VECTOR(7 downto 0);  -- Registro de salida
     signal CLK : STD_LOGIC; --Reloj
     signal CONT_CLK STD_LOGIC_VECTOR(26 downto 0); --Contador de reloj
-    signal Display : STD_LOGIC_VECTOR(6 downto 0); --Display de instruccion
+    signal DisplayInst : STD_LOGIC_VECTOR(6 downto 0); --Display de instruccion
+    signal DisplayValue : STD_LOGIC_VECTOR(6 downto 0);
+    signal DisplayPosition : STD_LOGIC_VECTOR(6 downto 0);
     -- constantes de los 7 segmentos
-    constant CERO : STD_LOGIC_VECTOR(6 downto 0) := "1000000";
-    constant UNO : STD_LOGIC_VECTOR(6 downto 0) := "1111001";
-    constant DOS : STD_LOGIC_VECTOR(6 downto 0) := "0100100";
-    constant TRES : STD_LOGIC_VECTOR(6 downto 0) := "0110000";
-    constant CUATRO : STD_LOGIC_VECTOR(6 downto 0) := "0011001";
-    constant CINCO : STD_LOGIC_VECTOR(6 downto 0) := "0010010";
-    constant SEIS : STD_LOGIC_VECTOR(6 downto 0) := "0000010";
-    constant SIETE : STD_LOGIC_VECTOR(6 downto 0) := "1111000";
-    constant OCHO : STD_LOGIC_VECTOR(6 downto 0) := "0000000";
-    constant NUEVE : STD_LOGIC_VECTOR(6 downto 0) := "0010000";
-    constant A : STD_LOGIC_VECTOR(6 downto 0) := "0000000";
+    constant ZERO : STD_LOGIC_VECTOR(6 downto 0) := "1000000";
+    constant ONE : STD_LOGIC_VECTOR(6 downto 0) := "1111001";
+    constant TWO : STD_LOGIC_VECTOR(6 downto 0) := "0100100";
+    constant THREE : STD_LOGIC_VECTOR(6 downto 0) := "0110000";
+    constant FOUR : STD_LOGIC_VECTOR(6 downto 0) := "0011001";
+    constant FIVE : STD_LOGIC_VECTOR(6 downto 0) := "0010010";
+    constant SIX : STD_LOGIC_VECTOR(6 downto 0) := "0000010";
+    constant SEVEN : STD_LOGIC_VECTOR(6 downto 0) := "1111000";
+    constant EIGHT : STD_LOGIC_VECTOR(6 downto 0) := "0000000";
+    constant NINE : STD_LOGIC_VECTOR(6 downto 0) := "0010000";
+    constant A : STD_LOGIC_VECTOR(6 downto 0) := "0001000";
+    constant B : STD_LOGIC_VECTOR(6 downto 0) := "0000011";
+    constant C : STD_LOGIC_VECTOR(6 downto 0) := "1000110";
+    constant D : STD_LOGIC_VECTOR(6 downto 0) := "0100001";
+    constant E : STD_LOGIC_VECTOR(6 downto 0) := "0000110";
+    constant F : STD_LOGIC_VECTOR(6 downto 0) := "0001110";
+    constant OFF : STD_LOGIC_VECTOR(6 downto 0) := "1111111";
 begin
     with instrucciones select --seleccion de instruccion
-        Display <= (CERO & CERO) when "000000",
-                   (CERO & UNO) when "000001",
-                   (CERO & DOS) when "000010",
-                   (CERO & TRES) when "000011",
-                   (CERO & CUATRO) when "000100",
+        Display <= (OFF & CERO) when "000000",
+                   (OFF & UNO) when "000001",
+                   (OFF & DOS) when "000010",
+                   (OFF & TRES) when "000011",
+                   (OFF & CUATRO) when "000100",
                    (OFF & CINCO) when "000101",
                    (OFF & SEIS) when "000110",
                    (OFF & SIETE) when "000111",
                    (OFF & OCHO) when "001000",
                    (OFF & NUEVE) when "001001",
-                   (UNO & CERO) when "001010",
-                   (UNO & UNO) when "001011",
-                   (UNO & DOS) when "001100",
-                   (UNO & TRES) when "001101",
-                   (UNO & CUATRO) when "001110";
+                   (OFF & A) when "001010",
+                    (OFF & B) when "001011",
+                    (OFF & C) when "001100",
+                    (OFF & D) when "001101",
+                    (OFF & E) when "001110",
+                    (OFF & F) when "001111",
+                    (ONE & OFF) when "010000",
+                    (ONE & ONE) when "010001",
+                    (ONE & TWO) when "010010",
+                    (ONE & THREE) when "010011",
+                    (OFF & OFF) when others;
 
     divFrecuencia: process(OS_CLK,CLR)
     begin
@@ -80,7 +94,9 @@ begin
         end if;
     end process contAnillo;
 
-    process(Datos,EXE,instrucciones)
+
+
+    bitPRocesor :process(Datos,EXE,instrucciones)
     begin
         if (EXE = '0') then --Ejecucion de instruccion
             case instrucciones is --seleccion de instruccion
@@ -102,5 +118,6 @@ begin
                     --instrucciones <= "000000";
             end case;
         end if;
-    end process;
+    end process bitPRocesor;
+
 end architecture DATA;
